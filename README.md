@@ -20,27 +20,71 @@ A Cloudflare Worker that routes LLM requests to the best available **free model*
 
 ## Setup
 
-### Cloudflare secrets
+### 1. Add the GitHub Actions workflow (manual step)
 
-Set these in your Cloudflare dashboard or via wrangler:
+Due to GitHub token scope, the workflow file must be added manually. In your repo:
+
+1. Go to https://github.com/goggles8p/free-forever-router
+2. Click **Add file** → **Create new file**
+3. Path: `.github/workflows/deploy.yml`
+4. Paste the contents below
+5. Commit directly to `main`
+
+```yaml
+name: Deploy to Cloudflare
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Deploy to Cloudflare
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          HUGGINGFACE_TOKEN: ${{ secrets.HUGGINGFACE_TOKEN }}
+```
+
+### 2. Add GitHub secrets
+
+Go to **Settings** → **Secrets and variables** → **Actions** → **New repository secret**:
+
+- `CLOUDFLARE_API_TOKEN` — your Cloudflare API token with Workers edit permissions
+- `CLOUDFLARE_ACCOUNT_ID` — your Cloudflare account ID
+- `OPENROUTER_API_KEY` — your OpenRouter API key
+- `HUGGINGFACE_TOKEN` — your Hugging Face API token
+
+### 3. Deploy
+
+Push to `main` (or click **Run workflow** manually). GitHub Actions deploys to Cloudflare.
+
+### Cloudflare Worker secrets
+
+If you deploy manually with Wrangler, set:
 
 ```bash
 wrangler secret put OPENROUTER_API_KEY
 wrangler secret put HUGGINGFACE_TOKEN
 ```
-
-### GitHub secrets
-
-Add these to your GitHub repo settings:
-
-- `CLOUDFLARE_API_TOKEN`
-- `CLOUDFLARE_ACCOUNT_ID`
-- `OPENROUTER_API_KEY`
-- `HUGGINGFACE_TOKEN`
-
-### Deploy
-
-Push to `main` — GitHub Actions deploys automatically.
 
 ## Usage in opencode
 
