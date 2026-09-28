@@ -18,6 +18,26 @@ A Cloudflare Worker that routes LLM requests to the best available **free model*
 4. Forwards the request to OpenRouter or Hugging Face
 5. Streams the response back
 
+## Preflight Checks
+
+Before any deployment, run:
+
+```bash
+npm run preflight
+```
+
+This checks and auto-fixes:
+- GitHub repo status and remote
+- Required workflow files
+- GitHub secrets
+- `wrangler.toml` config (including `[ai]` binding)
+- Worker source validity
+- `.gitignore` excludes secrets
+- Local env tokens
+- Worker name validity
+
+In CI, preflight runs automatically on PRs and must pass before deploy.
+
 ## Setup
 
 ### 1. Add the GitHub Actions workflow (manual step)
