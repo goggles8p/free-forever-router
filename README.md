@@ -40,15 +40,40 @@ In CI, preflight runs automatically on PRs and must pass before deploy.
 
 ## Setup
 
-### 1. Add the GitHub Actions workflow (manual step)
+### 1. Add the GitHub Actions workflows (manual step)
 
-Due to GitHub token scope, the workflow file must be added manually. In your repo:
+Due to GitHub token scope, workflow files must be added manually. Create both files in your repo:
 
-1. Go to https://github.com/goggles8p/free-forever-router
-2. Click **Add file** → **Create new file**
-3. Path: `.github/workflows/deploy.yml`
-4. Paste the contents below
-5. Commit directly to `main`
+#### `.github/workflows/preflight.yml`
+
+```yaml
+name: Preflight
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    name: Preflight Checks
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run preflight checks
+        run: node scripts/preflight.js
+```
+
+#### `.github/workflows/deploy.yml`
 
 ```yaml
 name: Deploy to Cloudflare
@@ -59,7 +84,25 @@ on:
   workflow_dispatch:
 
 jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    name: Preflight Checks
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run preflight checks
+        run: node scripts/preflight.js
+
   deploy:
+    needs: preflight
     runs-on: ubuntu-latest
     name: Deploy
     steps:
@@ -83,6 +126,12 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           HUGGINGFACE_TOKEN: ${{ secrets.HUGGINGFACE_TOKEN }}
 ```
+
+To add them:
+1. Go to https://github.com/goggles8p/free-forever-router
+2. Click **Add file** → **Create new file**
+3. Paste the path and contents for each file above
+4. Commit directly to `main`
 
 ### 2. Add GitHub secrets
 
