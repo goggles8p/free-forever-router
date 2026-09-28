@@ -1,0 +1,14 @@
+{
+  "name": "free-forever-router",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker router that selects the best free LLM from OpenRouter and Hugging Face",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "lint": "echo 'No lint configured'"
+  },
+  "devDependencies": {
+    "wrangler": "^3.78.0"
+  }
+}

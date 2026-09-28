@@ -1,0 +1,7 @@
+name = "free-forever-router"
+main = "src/index.js"
+compatibility_date = "2024-09-01"
+
+# No secrets here - use wrangler secret put or GitHub Actions
+[vars]
+ENVIRONMENT = "production"
