@@ -1,3 +1,13 @@
+# HARD RULE: no new sections
+
+Owner, 2026-10-06: do NOT add a section, page, tab, nav entry, panel, card, drawer, modal or any
+other new surface unless the owner explicitly says "add a section" or names the new page. A feature
+request is a change to the place where that work ALREADY lives. Cannot see how to do it without a
+new surface? ASK which surface, and build nothing until he answers. Adding a surface he did not ask
+for is a defect; removing one he did not ask for is a fix. Every repo, every agent, every session.
+
+---
+
 # READ FIRST: Airtable is RETIRED
 
 Airtable is defunct. It is fully phased out. There is no Airtable any more.
